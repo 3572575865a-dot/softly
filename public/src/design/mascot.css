@@ -1,0 +1,48 @@
+/* Shared character rig. The transparent outer hit area is owned by Home. */
+.little-friend{width:var(--mascot-size,140px);height:calc(var(--mascot-size,140px)*1.02143);pointer-events:none}
+.mascot-art{position:relative;width:140px;height:143px;transform:scale(var(--mascot-scale,1));transform-origin:top left;rotate:0deg}
+.has-header-mascot{position:relative;padding-right:76px;min-height:64px}
+.header-mascot{position:absolute;right:0;top:0;width:56px;height:60px;pointer-events:none;opacity:.92}
+.mood-editor-top.has-header-mascot{padding-right:72px}
+.header-mascot .little-friend{filter:drop-shadow(0 4px 5px var(--asset-color-9c899814))}
+.mascot-touch>.little-friend[data-state]{animation:none}
+.little-friend .friend-body,.little-friend .foot,.little-friend .eye,.little-friend .smile{transition:transform var(--asset-time-1p2s) ease,border-radius var(--asset-time-1p2s) ease}
+/* Meditating: settled feet, closed eyes, almost imperceptible breath. */
+.little-friend[data-state="meditating"] .eye,.little-friend[data-state="sleeping"] .eye,.little-friend[data-state="dreamy"] .eye{height:4px;width:9px;background:transparent;border-bottom:1.5px solid var(--asset-color-756771);border-radius:0 0 50% 50%;box-shadow:none;top:46px}
+.little-friend[data-state="meditating"] .f-left{transform:translateX(3px) rotate(12deg)}
+.little-friend[data-state="meditating"] .f-right{transform:translateX(-3px) rotate(-12deg)}
+.little-friend[data-state="meditating"][data-animated="true"] .friend-body{animation:mascot-settled var(--asset-time-10s) ease-in-out infinite}
+/* Breathing includes a pause, contour changes and a tiny body lift. */
+.little-friend[data-state="breathing"][data-animated="true"] .friend-body{animation:mascot-breath var(--asset-time-8s) cubic-bezier(.4,0,.35,1) infinite}
+.little-friend[data-state="breathing"][data-animated="true"] .foot{animation:mascot-foot var(--asset-time-8s) ease-in-out infinite}
+/* Sleeping retains the same face and silhouette in a gently relaxed posture. */
+.little-friend[data-state="sleeping"] .mascot-art{rotate:-5deg}
+.little-friend[data-state="sleeping"] .friend-body{transform:translateY(3px) scale(1.02,.97)}
+.little-friend[data-state="sleeping"] .smile{width:9px;left:56px;height:4px}
+.little-friend[data-state="sleeping"] .foot{transform:translateY(-1px)}
+.little-friend[data-state="sleeping"][data-animated="true"] .friend-body{animation:mascot-sleep var(--asset-time-11s) ease-in-out infinite}
+/* Listening is an occasional tiny lean, not a beat-reactive dance. */
+.little-friend[data-state="listening"] .mascot-art{rotate:2deg}
+.little-friend[data-state="listening"] .eye{height:6px;top:45px}
+.little-friend[data-state="listening"][data-animated="true"] .friend-body{animation:mascot-listen var(--asset-time-13s) ease-in-out infinite;transform-origin:50% 85%}
+.little-friend[data-state="calm"] .eye{height:5px;top:46px}
+.little-friend:is([data-state="idle"],[data-state="calm"],[data-state="curious"])[data-animated="true"] .eye{animation:mascot-blink var(--asset-time-12s) ease-in-out infinite}
+.little-friend[data-state="curious"] .mascot-art{rotate:2deg}
+.little-friend[data-state="dreamy"] .mascot-art{rotate:-2deg}
+.little-friend[data-state="dreamy"][data-animated="true"] .friend-body{animation:mascot-settled var(--asset-time-12s) ease-in-out infinite}
+.little-friend[data-expression="happy"] .smile{height:11px;width:16px;left:52px}
+.little-friend[data-expression="sleepy"] .eye{height:3px;top:47px}
+.little-friend[data-expression="concerned"] .smile{transform:rotate(180deg);height:5px}
+.little-friend[data-animated="false"] *{animation:none!important}
+/* Quiet mode owns its own slow motion; it never selects another Home pose. */
+.app-shell[data-quiet="longPressPreparing"] .little-friend .friend-body,.app-shell[data-quiet="longPressPreparing"] .little-friend .foot{animation:none}
+.app-shell[data-quiet="overstimulation"] .little-friend .friend-body{animation:quiet-body var(--asset-time-10s) ease-in-out infinite}
+.app-shell[data-quiet="overstimulation"] .little-friend .foot,.app-shell[data-quiet="overstimulation"] .little-friend .eye{animation:none}
+@keyframes mascot-breath{0%,100%{transform:translateY(0) scale(1);border-radius:46% 46% 40% 40%}40%,54%{transform:translateY(-1.4px) scale(1.018,1.01);border-radius:47% 47% 43% 43%}}
+@keyframes mascot-foot{0%,100%{translate:0 0}40%,54%{translate:0 -.6px}}
+@keyframes mascot-settled{0%,100%{transform:translateY(1px)}45%,58%{transform:translateY(0) scale(1.008,1.003)}}
+@keyframes mascot-sleep{0%,100%{transform:translateY(3px) scale(1.02,.97)}45%,58%{transform:translateY(2px) scale(1.025,.978)}}
+@keyframes mascot-listen{0%,38%,100%{transform:rotate(0deg)}51%,63%{transform:rotate(-1.5deg) translateY(-.5px)}78%{transform:rotate(.5deg)}}
+@keyframes mascot-blink{0%,54%,58%,100%{transform:scaleY(1)}56%{transform:scaleY(.12)}}
+@media(max-width:360px){.header-mascot{right:0}.has-header-mascot{padding-right:68px}}
+@media(prefers-reduced-motion:reduce){.little-friend,.little-friend *{animation:none!important;transition:none!important}}

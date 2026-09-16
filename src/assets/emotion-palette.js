@@ -1,0 +1,1 @@
+export const emotions=[['Happy','#F7E289'],['Calm','#35C8B4'],['Loved','#EA5E86'],['Energized','#FEF6F1'],['Content','#EA9B90'],['Dreamy','#DBC0E8'],['Sad','#A2BECC'],['Anxious','#5F86A6'],['Stressed','#BA70A1'],['Angry','#243A5E'],['Numb','#816684'],['Drained','#CFE3F1']].map(([emotionType,color])=>({emotionType,color}));
