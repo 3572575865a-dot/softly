@@ -1,7 +1,7 @@
 // All breathing presentation defaults are replaceable here. Paths are placeholder SVGs.
 export const breathingAssets={
- motion:{prepareSeconds:3,controlsMs:3000,revealMs:6000,settleMs:450,endingMs:2000,smoothingMs:120, pauseSmoothingMs:400,ambientSeconds:24},
- visual:{orbScale:.34,capsuleWidth:.12,capsuleHeight:.32,secondInhaleShare:.78,bubbleScale:.30,bubbleBase:.72,bubbleRise:12,bubbleMergeX:65,bubbleMergeY:40,moonTravel:36,reducedRange:.12,rippleScale:.06,lightTravel:3},
+ motion:{prepareSeconds:3,preparationFadeMs:450,preparationPulseMs:1000,controlsMs:3000,revealMs:6000,settleMs:450,endingMs:2000,smoothingMs:120, pauseSmoothingMs:400,ambientSeconds:24},
+ visual:{preparationStartScale:.78,preparationEndScale:1.2,preparationOpacity:.35,orbScale:.34,capsuleWidth:.12,capsuleHeight:.32,secondInhaleShare:.78,bubbleScale:.30,bubbleBase:.72,bubbleRise:12,bubbleMergeX:65,bubbleMergeY:40,moonTravel:36,reducedRange:.12,rippleScale:.06,lightTravel:3},
  material:{pink:'#EDD8E7',milk:'#fffaf8',shade:'#c3adb9',opacity:.7},
  worlds:{
   square:{path:'M90 50H210Q250 50 250 90V210Q250 250 210 250H90Q50 250 50 210V90Q50 50 90 50Z'},

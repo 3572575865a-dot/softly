@@ -5,7 +5,7 @@ Authoritative specification: MOOD-FINAL-SPEC.md. This replaces earlier conflicti
 ## Daily record
 - Zero or one record per calendar day, with 1–3 emotions, independent intensities, and one optional note.
 - Make creates the record. The same primary control becomes Remake and updates that record. No Add a moment or View-date buttons.
-- The edit deadline is always original createdAt + 24 rolling hours. Updating does not extend it. Historical details become read-only gracefully.
+- Editing follows local calendar days: today is editable; a missing yesterday may be backfilled and remade until today ends. Records originally made yesterday and older dates are read-only. Foreground and midnight refresh eligibility. Mood records retain moodDate, createdAt and wasBackfilled.
 - Gummy and proportion bar share the same normalized intensity composition. Percentages are not visible; accessible composition descriptions may include them.
 - The optional note card contains only original creation time and the actual note, with no repeated emotions or intensity descriptions. Empty notes omit the card.
 
@@ -26,4 +26,7 @@ Authoritative specification: MOOD-FINAL-SPEC.md. This replaces earlier conflicti
 Only Mood data, rendering, controls, layout, tests, and this contract changed. Existing Home, Breathe, Sound, Let It Out, Quiet Mode, and regulation-ring behavior remain unchanged. Shape, material, color palette, sizes, and motion continue to use shared replaceable asset configuration.
 
 ## Validation
-42 regression tests pass. Mood coverage includes one-record upsert, 24-hour limits, source backup migration, Week transparent states, partial-week Month aggregation, per-month Year aggregation, removal of old contributions after Remake, and responsive size bounds. Browser QA uses an isolated in-memory store.
+Regression coverage is documented in docs/2026-09-21-POLISH.md. Mood coverage includes one-record upsert, local-calendar editing and backfill boundaries, source backup migration, Week transparent states, partial-week Month aggregation, per-month Year aggregation, removal of old contributions after Remake, and responsive size bounds. Browser QA uses an isolated in-memory store.
+
+## September 21 palette and intensity update
+The selectable palette is defined in src/assets/emotion-palette.js. Content and Dreamy remain historical identities only. Sliders use normalized 0–1 intensity; persistence retains the existing lossless weight = intensity × 100 encoding. The gummy and detail bar both use mix(). New saves require at least one positive intensity.
