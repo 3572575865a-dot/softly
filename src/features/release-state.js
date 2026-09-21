@@ -9,6 +9,7 @@ export function createReleaseSession(memory,clock=()=>Date.now()){
  keep(){if(expire()||!text.trim())return false;const current=memory.note();if(current&&current.id!==retained?.id)throw new Error('Another text is being kept. Return home to open it.');retained=memory.saveNote(text);phase='kept';return true;},
  complete(){if(phase!=='releasing')return false;if(retained&&memory.note()?.id===retained.id)memory.clearNote();text='';retained=null;phase='released';return true;},
  remove(){if(retained&&memory.note()?.id===retained.id)memory.clearNote();text='';retained=null;phase='writing';},
+ resetCompleted(){if(phase!=='released')return false;text='';retained=null;phase='writing';return true;},
  cancelRelease(){if(phase==='releasing')phase='writing';}
  };
 }

@@ -37,7 +37,7 @@ export function attachQuietMode(root, onDouble) {
  listen(mascot,'pointermove',e=>{if(state==='overstimulation'&&mascot.hasPointerCapture(e.pointerId))squish(e);else if(point&&Math.hypot(e.clientX-point.x,e.clientY-point.y)>14){lastTap=0;cancel();}});
  listen(mascot,'pointerup',()=>{releaseSquish();if(state!=='longPressPreparing')return;const short=performance.now()-pressStart<380;cancel();const now=performance.now();if(short&&lastTap&&now-lastTap<380){lastTap=0;onDouble();}else lastTap=short?now:0;});
  listen(mascot,'pointercancel',()=>{lastTap=0;releaseSquish();cancel();});
- listen(window,'blur',()=>{cancel();releaseSquish();wake.suspend();});listen(window,'focus',()=>wake.sync());listen(window,'pagehide',()=>{cancel();wake.suspend();});listen(window,'pageshow',()=>wake.sync());listen(document,'visibilitychange',()=>{if(document.hidden)cancel();wake.sync();});
+ listen(window,'blur',()=>{cancel();releaseSquish();wake.suspend();});listen(window,'focus',()=>wake.resume());listen(window,'pagehide',()=>{cancel();wake.suspend();});listen(window,'pageshow',()=>wake.resume());listen(document,'visibilitychange',()=>{if(document.hidden){cancel();wake.suspend();}else wake.resume();});
  listen(mascot,'keydown',e=>{if(state==='home'&&e.key==='Enter'){e.preventDefault();onDouble();}if(e.key===' '&&!e.repeat){e.preventDefault();prepare();}});
  listen(mascot,'keyup',e=>{if(e.key===' ')cancel();});listen(mascot,'blur',cancel);
  listen(document,'keydown',e=>{if(state!=='overstimulation')return;if(e.key==='Escape'){e.preventDefault();exit();}if(e.key==='Tab'){e.preventDefault();reveal();const exitButton=layer.querySelector('[data-quiet="exit"]');(document.activeElement===sound?exitButton:document.activeElement===exitButton?mascot:sound).focus();}});
