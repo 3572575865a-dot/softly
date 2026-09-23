@@ -1,4 +1,4 @@
-export const emotions=[['Happy','#FFF391'],['Calm','#CCEDA4'],['Loved','#EB7C93'],['Energized','#FCA177'],['Excited','#FFD864'],['Hopeful','#DDBEF0'],['Sad','#9CB4C2'],['Anxious','#6785A2'],['Stressed','#A36490'],['Angry','#39507F'],['Numb','#7E6781'],['Drained','#847A81']].map(([emotionType,color])=>({emotionType,color}));
+export const emotions=[['Happy','#FFE7A8'],['Calm','#CFECC7'],['Loved','#F8B4C3'],['Energized','#FFD0AE'],['Excited','#FCD681'],['Hopeful','#E4CDFB'],['Sad','#BFD7EE'],['Anxious','#A7BDD6'],['Stressed','#C9A7C7'],['Angry','#B9CFEA'],['Numb','#C7B7D3'],['Drained','#D2C8C8']].map(([emotionType,color])=>({emotionType,color}));
 // Historical identities remain themselves and are never offered as new selections.
 export const legacyEmotions=[{emotionType:'Content',color:'#EA9B90'},{emotionType:'Dreamy',color:'#DBC0E8'}];
 export const allEmotions=[...emotions,...legacyEmotions];

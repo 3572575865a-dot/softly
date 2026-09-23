@@ -6,7 +6,12 @@ export const fromIntensity=(emotionType,intensity)=>({emotionType,weight:Math.ma
 export const localDate=(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 export function parseDate(key){const d=new Date(key+'T12:00:00');if(!/^\d{4}-\d{2}-\d{2}$/.test(key)||!Number.isFinite(+d)||localDate(d)!==key)throw new Error('Choose a valid date.');return d;}
 export function mix(items){const total=items.reduce((n,e)=>n+intensityOf(e),0);return items.map(e=>({...e,proportion:total?intensityOf(e)/total:1/items.length}));}
-export function dominant(items){return mix(items).reduce((a,b)=>!a||b.proportion>a.proportion?b:a,null)?.emotionType||null;}
+export function dominant(items){
+ return items.filter(e=>e.weight>0).reduce((best,item,index)=>{
+ const candidate={...item,order:item.lastOccurrence??index};
+ return !best||candidate.weight>best.weight||(candidate.weight===best.weight&&candidate.order>=best.order)?candidate:best;
+ },null)?.emotionType||null;
+}
 export function entry(date,items,note='',previous){parseDate(date);if(items.length<1||items.length>3||new Set(items.map(e=>e.emotionType)).size!==items.length||items.some(e=>!allEmotions.some(t=>t.emotionType===e.emotionType)||!Number.isFinite(e.weight)||e.weight<0||e.weight>100))throw new Error('Choose up to three feelings.');const now=new Date().toISOString(),createdAt=previous?.createdAt||now;return {id:previous?.id||('mood-'+crypto.randomUUID()),date,moodDate:date,wasBackfilled:previous?.wasBackfilled??false,emotions:items.map(e=>({...e})),note:String(note).slice(0,4000),createdAt,updatedAt:now,editableUntil:new Date(Date.parse(createdAt)+86400000).toISOString()};}
 export function yesterday(now=Date.now()){const date=new Date(now);date.setDate(date.getDate()-1);return localDate(date);}
 export function nextLocalMidnight(now=Date.now()){const date=new Date(now);date.setHours(24,0,0,0);return +date;}
@@ -22,7 +27,17 @@ export function shiftDate(date,period,amount){const d=parseDate(date);if(period=
 export function entriesOnDate(entries,date){return Object.values(entries).filter(r=>r.date===date).sort((a,b)=>Date.parse(a.createdAt)-Date.parse(b.createdAt));}
 export const intensityLabel=weight=>weight<34?'A little':weight<67?'Some':'A lot';
 // Persistence enforces one source record per date; visuals remain derived.
-export function dailyComposition(records){if(records.length>1)throw new Error('One record per day is required.');return mix(records[0]?.emotions||[]);}
+export function dailyComposition(records){
+ const totals=new Map();let occurrence=0;
+ // Derived only: one date remains one physical gummy and the save model is unchanged.
+ const ordered=records.map((record,index)=>({record,index})).sort((a,b)=>Date.parse(a.record.updatedAt||a.record.createdAt)-Date.parse(b.record.updatedAt||b.record.createdAt)||a.index-b.index);
+ for(const {record} of ordered)for(const item of record.emotions){
+ const order=occurrence++;if(item.weight<=0)continue;
+ const total=totals.get(item.emotionType)||{emotionType:item.emotionType,weight:0};
+ total.weight+=item.weight;total.lastOccurrence=order;totals.set(item.emotionType,total);
+ }
+ return mix([...totals.values()]);
+}
 export function deriveDayGummy(entries,date){const records=entriesOnDate(entries,date);return {id:'day:'+date,date,recorded:records.length>0,recordIds:records.map(r=>r.id),items:dailyComposition(records),weight:50};}
 export function saveMoodRecord(entries,date,items,note,now=Date.now()){const current=entriesOnDate(entries,date);if(current.length>1)throw new Error('One record per day is required.');const record=saveDaily(date,items,note,current[0],now);return {...entries,[record.id]:record};}
 export function periodDates(date,period='Week'){if(period==='Week')return weekDates(date);const d=parseDate(date);d.setDate(1);if(period==='Year')d.setMonth(0);const month=d.getMonth(),year=d.getFullYear(),days=[];while(d.getFullYear()===year&&(period==='Year'||d.getMonth()===month)){days.push(localDate(d));d.setDate(d.getDate()+1);}return days;}

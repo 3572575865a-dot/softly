@@ -1,0 +1,26 @@
+.custom-shortcut{padding:0 0 38px;color:var(--text)}
+.custom-shortcut-back{display:grid;place-items:center;width:56px;height:56px;padding:0;border:1px solid var(--edge);background:var(--glass);box-shadow:var(--shadow);border-radius:50%}
+.custom-shortcut-back svg{display:block;width:21px;height:21px;margin:0}
+.custom-shortcut-heading{text-align:center;margin:27px 0 25px}
+.custom-shortcut-heading h1{font-size:29px;font-weight:400;letter-spacing:-.6px;margin:0 0 10px}
+.custom-shortcut-heading p{margin:0;color:var(--muted);font-size:14px}
+.custom-shortcut-types{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:5px;border:1px solid var(--edge);border-radius:24px;background:var(--glass)}
+.custom-shortcut-types button{min-height:46px;border-radius:19px;background:transparent;color:var(--muted)}
+.custom-shortcut-types button[aria-pressed="true"]{background:var(--milk);color:var(--text);box-shadow:0 2px 12px rgba(108,87,103,.08)}
+.custom-shortcut-label{font-size:13px;color:var(--muted);margin:26px 2px 12px}
+.custom-shortcut-items{max-height:min(39svh,340px);overflow:auto;display:grid;gap:8px;scrollbar-width:thin}
+.custom-shortcut-item{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:66px;text-align:left;padding:12px 17px;border-radius:21px}
+.custom-shortcut-item>span:first-child{display:grid;gap:3px;min-width:0}
+.custom-shortcut-item strong{font-weight:450;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.custom-shortcut-item small{font-size:11px;color:var(--muted)}
+.custom-shortcut-radio{width:18px;height:18px;flex:none;border:1.5px solid #9c8b9f;border-radius:50%}
+.custom-shortcut-item[aria-pressed="true"] .custom-shortcut-radio{border:5px solid #8c7894}
+.custom-shortcut-icons{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.custom-shortcut-icons button{display:grid;justify-items:center;align-content:center;gap:7px;min-height:68px;padding:8px 2px;border:1px solid var(--edge);border-radius:20px;background:var(--glass);color:#89798d}
+.custom-shortcut-icons button[aria-pressed="true"]{border-color:#aa9ab2;background:var(--milk)}
+.custom-shortcut-icons .custom-shortcut-icon-preview{display:grid;place-items:center;width:34px;height:34px;border-radius:50%}
+.custom-shortcut-icons svg{width:25px;height:25px}
+.custom-shortcut-icons span{font-size:10px;color:var(--muted)}
+.custom-shortcut-save{margin-top:28px}
+.custom-shortcut-save:disabled{opacity:.5;cursor:default}
+.custom-shortcut-error{min-height:20px;font-size:12px;color:var(--muted);text-align:center}

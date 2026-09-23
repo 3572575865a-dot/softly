@@ -23,6 +23,13 @@
 [data-world="ribbon"] .world-base{stroke-width:17;stroke-opacity:.38}[data-world="ribbon"] .world-energy{stroke-width:17;opacity:.96}
 [data-world="moon"] .world-base{fill-opacity:.9;stroke-opacity:.65}[data-world="moon"] .world-shadow,[data-world="sphere"] .world-shadow,[data-world="orb"] .world-shadow{display:block}
 @media(prefers-reduced-motion:reduce){.world-shadow{transform:none!important}.breathing-guidance{transition:opacity .2s}}
-/* Coherent ball follows the inner contact edge; Sigh keeps its balloon silhouette. */
-[data-world="spiral"] .world-ball{stroke:none}.balloon-knot{fill:var(--world-accent)}.balloon-string{fill:none;stroke:var(--world-accent);stroke-width:1.4;stroke-linecap:round;opacity:.7}[data-world="sphere"] .world-shadow{display:none}[data-world="sphere"] .world-base{stroke-opacity:.4}
+/* Coherent ball follows the actual track centerline; Sigh keeps its balloon silhouette. */
+[data-world="spiral"] .world-ball{stroke:none}.balloon-knot{fill:var(--world-detail)}.balloon-string{fill:none;stroke:var(--world-detail);stroke-width:1.4;stroke-linecap:round;opacity:.7}[data-world="sphere"] .world-shadow{display:none;fill:var(--world-detail)}[data-world="sphere"] .world-base{stroke-opacity:.4}
 [data-world="ribbon"] .world-base,[data-world="ribbon"] .world-energy{display:none}.flower-stem{fill:none;stroke:var(--world-accent);stroke-width:5;stroke-linecap:round;opacity:.55}.flower-petal{stroke:var(--world-accent);stroke-width:.7;stroke-opacity:.4}.flower-center{stroke:var(--world-accent);stroke-width:2;stroke-opacity:.7}
+
+[data-world="spiral"] .world-base,[data-world="cloud"] .world-base{stroke:var(--world-track)}
+
+[data-world="orb"] .world-base{fill:var(--world-accent);stroke:var(--world-accent)}
+
+.breathe-settings [data-action="save-breath-default"]{display:block;width:100%;min-height:48px;margin-top:12px}.breathe-settings .breathe-back{display:grid;place-items:center;width:56px;height:56px;min-width:56px;padding:0;border-radius:50%;font-size:32px;line-height:1}
+.breathe-settings .breathe-back{width:44px;height:44px;min-width:44px;font-size:inherit}

@@ -1,9 +1,10 @@
 import {createQuietWakeLock} from './quiet-wake-lock.js';
+import {tummyAssets} from '../assets/tummy.js';
 import {assets} from '../assets/config.js';
 import {startAmbience} from './audio.js';
 
 // Keeps the original Home DOM and mascot alive throughout all four states.
-export function attachQuietMode(root, onDouble) {
+export function attachQuietMode(root, onDouble, onSingle=()=>{}) {
  const shell=root.querySelector('.app-shell'),mascot=root.querySelector('.mascot-touch');
  const wake=createQuietWakeLock();
  const originalLabel=mascot.getAttribute('aria-label');
@@ -13,6 +14,7 @@ export function attachQuietMode(root, onDouble) {
  shell.append(layer);
  const controls=layer.querySelector('.quiet-controls'),sound=layer.querySelector('[data-quiet="sound"]');
  const abort=new AbortController(),listen=(el,event,fn)=>el.addEventListener(event,fn,{signal:abort.signal});
+ let tapTimer;
  let state='home',pressStart=0,point=null,lastTap=0,frame,restoreTimer,controlsTimer,relaxTimers=[],stopSound=()=>{},soundOn=false,scroll=0;
  const setState=value=>{state=value;shell.dataset.quiet=value;};setState('home');
  const clearPress=()=>{cancelAnimationFrame(frame);pressStart=0;point=null;};
@@ -28,22 +30,22 @@ export function attachQuietMode(root, onDouble) {
  relaxTimers=[30000,60000,120000].map((ms,i)=>setTimeout(()=>shell.dataset.relax=String(i+1),ms));
  };
  const cancel=()=>{if(state!=='longPressPreparing')return;clearPress();setState('home');shell.style.setProperty('--quiet-progress','0');releaseSquish();};
- const prepare=()=>{if(state!=='home')return;setState('longPressPreparing');pressStart=performance.now();
+ const prepare=()=>{if(state!=='home')return;clearTimeout(tapTimer);setState('longPressPreparing');pressStart=performance.now();
  const tick=now=>{if(state!=='longPressPreparing')return;const elapsed=now-pressStart;shell.style.setProperty('--quiet-progress',String(Math.min(1,elapsed/3000)));if(elapsed>=3000)enter();else frame=requestAnimationFrame(tick);};frame=requestAnimationFrame(tick);};
  const exit=()=>{if(state!=='overstimulation')return;wake.setActive(false);stopSound();soundOn=false;sound.textContent='Sound Off';sound.setAttribute('aria-pressed','false');clearTimeout(controlsTimer);relaxTimers.forEach(clearTimeout);controls.classList.remove('visible');controls.inert=true;setState('returningHome');shell.style.setProperty('--quiet-progress','0');releaseSquish();mascot.style.setProperty('--center-y','0px');delete shell.dataset.relax;
  restoreTimer=setTimeout(()=>{layer.hidden=true;setState('home');surrounding.forEach(e=>e.inert=false);document.body.style.overflow='';window.scrollTo(0,scroll);mascot.setAttribute('aria-label',originalLabel);mascot.focus({preventScroll:true});},assets.motion.quietReturnMs);};
  listen(mascot,'contextmenu',e=>e.preventDefault());
  listen(mascot,'pointerdown',e=>{if(e.button!==0)return;if(state==='overstimulation'){mascot.setPointerCapture(e.pointerId);squish(e);return;}if(state!=='home')return;point={x:e.clientX,y:e.clientY};mascot.setPointerCapture(e.pointerId);squish(e);prepare();});
  listen(mascot,'pointermove',e=>{if(state==='overstimulation'&&mascot.hasPointerCapture(e.pointerId))squish(e);else if(point&&Math.hypot(e.clientX-point.x,e.clientY-point.y)>14){lastTap=0;cancel();}});
- listen(mascot,'pointerup',()=>{releaseSquish();if(state!=='longPressPreparing')return;const short=performance.now()-pressStart<380;cancel();const now=performance.now();if(short&&lastTap&&now-lastTap<380){lastTap=0;onDouble();}else lastTap=short?now:0;});
+ listen(mascot,'pointerup',()=>{releaseSquish();if(state!=='longPressPreparing')return;const short=performance.now()-pressStart<380;cancel();const now=performance.now();if(short&&lastTap&&now-lastTap<380){clearTimeout(tapTimer);lastTap=0;onDouble();}else{lastTap=short?now:0;if(short)tapTimer=setTimeout(()=>{lastTap=0;if(state==='home')onSingle();},tummyAssets.motion.tapDelayMs);}});
  listen(mascot,'pointercancel',()=>{lastTap=0;releaseSquish();cancel();});
  listen(window,'blur',()=>{cancel();releaseSquish();wake.suspend();});listen(window,'focus',()=>wake.resume());listen(window,'pagehide',()=>{cancel();wake.suspend();});listen(window,'pageshow',()=>wake.resume());listen(document,'visibilitychange',()=>{if(document.hidden){cancel();wake.suspend();}else wake.resume();});
  listen(mascot,'keydown',e=>{if(state==='home'&&e.key==='Enter'){e.preventDefault();onDouble();}if(e.key===' '&&!e.repeat){e.preventDefault();prepare();}});
- listen(mascot,'keyup',e=>{if(e.key===' ')cancel();});listen(mascot,'blur',cancel);
+ listen(mascot,'keyup',e=>{if(e.key===' '){const short=state==='longPressPreparing'&&performance.now()-pressStart<380;cancel();if(short)onSingle();}});listen(mascot,'blur',cancel);
  listen(document,'keydown',e=>{if(state!=='overstimulation')return;if(e.key==='Escape'){e.preventDefault();exit();}if(e.key==='Tab'){e.preventDefault();reveal();const exitButton=layer.querySelector('[data-quiet="exit"]');(document.activeElement===sound?exitButton:document.activeElement===exitButton?mascot:sound).focus();}});
  listen(layer,'click',e=>{if(e.target===layer)reveal();});
  listen(controls,'pointerdown',()=>{clearTimeout(controlsTimer);});
  listen(sound,'click',()=>{if(soundOn){stopSound();soundOn=false;}else{try{stopSound=startAmbience('noise');soundOn=true;}catch{soundOn=false;}}sound.textContent=soundOn?'Sound On':'Sound Off';sound.setAttribute('aria-pressed',String(soundOn));reveal();});
  listen(layer.querySelector('[data-quiet="exit"]'),'click',exit);
- return ()=>{wake.dispose();abort.abort();clearPress();clearTimeout(restoreTimer);clearTimeout(controlsTimer);relaxTimers.forEach(clearTimeout);stopSound();document.body.style.overflow='';layer.remove();};
+ return ()=>{clearTimeout(tapTimer);wake.dispose();abort.abort();clearPress();clearTimeout(restoreTimer);clearTimeout(controlsTimer);relaxTimers.forEach(clearTimeout);stopSound();document.body.style.overflow='';layer.remove();};
 }
