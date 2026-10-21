@@ -22,8 +22,8 @@
     .indicators{position:absolute;top:22px;right:26px;display:flex;align-items:center;gap:6px;height:18px}
     .indicators svg{display:block;fill:currentColor;stroke:currentColor}
     .indicators .battery{width:27px;height:13px;fill:none;stroke-width:1.5}
-    iframe{position:absolute;left:0;top:62px;width:402px;height:787px;border:0;background:#e9e5e6}
-    .bottom{position:absolute;left:0;right:0;bottom:0;height:25px;background:#e9e5e6;pointer-events:none}
+    iframe{position:absolute;inset:0;width:402px;height:874px;border:0;background:#e9e5e6}
+    .bottom{position:absolute;left:0;right:0;bottom:0;height:25px;pointer-events:none}
     .home-indicator{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);width:134px;height:5px;border-radius:4px;background:#454650}
     @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
   </style>
@@ -50,6 +50,14 @@
   <script>
     const stage=document.querySelector('.stage');
     const phone=document.querySelector('.phone');
+    const appFrame=document.querySelector('iframe');
+    function applySafeArea(){
+      try{
+        const root=appFrame.contentDocument.documentElement;
+        root.style.setProperty('--safe-top','62px');
+        root.style.setProperty('--safe-bottom','25px');
+      }catch{}
+    }
     function fit(){
       const scale=Math.min(1,(window.innerWidth-24)/430,(window.innerHeight-24)/902);
       stage.style.width=`${430*scale}px`;
@@ -58,6 +66,8 @@
     }
     function time(){document.querySelector('#clock').textContent=new Intl.DateTimeFormat('zh-CN',{hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date());}
     window.addEventListener('resize',fit);
+    appFrame.addEventListener('load',applySafeArea);
+    if(appFrame.contentDocument?.readyState==='complete')applySafeArea();
     fit();time();setInterval(time,30000);
   </script>
 </body>
