@@ -1,6 +1,4 @@
 import {techniques} from './breathe.js';
-import {builtInTracks,musicStore} from './sound-data.js';
-import {assets} from '../assets/config.js';
 import {icon} from '../components/icons.js';
 
 const KEY='softly-custom-shortcut-v1';
@@ -23,33 +21,23 @@ const ICON_STYLES={
 
 export function shortcutIconStyle(id){return ICON_STYLES[id]||ICON_STYLES.star;}
 export function shortcutIcon(id){return `<svg viewBox="0 0 24 24" fill="none" stroke="${shortcutIconStyle(id).iconColor}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${ICONS[id]||ICONS.star}"/></svg>`;}
-export function readCustomShortcut(storage=localStorage){try{const value=JSON.parse(storage.getItem(KEY));return value&&['breathe','sound'].includes(value.type)&&typeof value.itemId==='string'&&ICONS[value.iconId]?value:null;}catch{return null;}}
+export function readCustomShortcut(storage=localStorage){try{const value=JSON.parse(storage.getItem(KEY));return value&&value.type==='breathe'&&typeof value.itemId==='string'&&ICONS[value.iconId]?value:null;}catch{return null;}}
 export function writeCustomShortcut(storage,shortcut){storage.setItem(KEY,JSON.stringify({type:shortcut.type,itemId:shortcut.itemId,iconId:shortcut.iconId,label:shortcut.label}));}
 
 export function customShortcutView({root,mount,onBack,onSave,initial=readCustomShortcut()}){
-  let active=true,type=initial?.type||'breathe',itemId=initial?.itemId||'',iconId=initial?.iconId||'waves',tracks=null;
-  mount(`<section class="custom-shortcut"><button class="icon-button custom-shortcut-back" type="button" aria-label="Back to Home">${icon('back')}</button><header class="custom-shortcut-heading"><h1>Custom Shortcut</h1><p>Keep something you reach for close.</p></header><div class="custom-shortcut-types" role="group" aria-label="Shortcut type"><button type="button" data-shortcut-type="breathe">Breathe</button><button type="button" data-shortcut-type="sound">Sound</button></div><p class="custom-shortcut-label">Choose one experience</p><div class="custom-shortcut-items" role="group" aria-label="Experiences"></div><p class="custom-shortcut-label">Choose an icon</p><div class="custom-shortcut-icons" role="group" aria-label="Shortcut icon">${Object.keys(ICONS).map(id=>`<button type="button" data-shortcut-icon="${id}" aria-label="${id}"><span class="custom-shortcut-icon-preview" style="background:${shortcutIconStyle(id).iconBackgroundColor}">${shortcutIcon(id)}</span><span>${id[0].toUpperCase()+id.slice(1)}</span></button>`).join('')}</div><button class="primary custom-shortcut-save" type="button">Save Shortcut</button><p class="custom-shortcut-error" role="alert"></p></section>`,{navigation:false});
+  let active=true,itemId=initial?.itemId||'',iconId=initial?.iconId||'waves';
+  mount(`<section class="custom-shortcut"><button class="icon-button custom-shortcut-back" type="button" aria-label="Back to Home">${icon('back')}</button><header class="custom-shortcut-heading"><h1>Custom Shortcut</h1><p>Keep something you reach for close.</p></header><p class="custom-shortcut-label">Choose a breathing method</p><div class="custom-shortcut-items" role="group" aria-label="Breathing methods"></div><p class="custom-shortcut-label">Choose an icon</p><div class="custom-shortcut-icons" role="group" aria-label="Shortcut icon">${Object.keys(ICONS).map(id=>`<button type="button" data-shortcut-icon="${id}" aria-label="${id}"><span class="custom-shortcut-icon-preview" style="background:${shortcutIconStyle(id).iconBackgroundColor}">${shortcutIcon(id)}</span><span>${id[0].toUpperCase()+id.slice(1)}</span></button>`).join('')}</div><button class="primary custom-shortcut-save" type="button">Save Shortcut</button><p class="custom-shortcut-error" role="alert"></p></section>`,{navigation:false});
   const items=root.querySelector('.custom-shortcut-items'),save=root.querySelector('.custom-shortcut-save'),error=root.querySelector('.custom-shortcut-error');
   root.querySelector('.custom-shortcut-back').onclick=onBack;
-  function available(){return type==='breathe'?techniques.map(t=>({id:t.id,label:t.name,detail:t.contextLabel,category:'breathe'})):tracks||[];}
+  function available(){return techniques.map(t=>({id:t.id,label:t.name,detail:t.contextLabel,category:'breathe'}));}
   function renderItems(){
-    root.querySelectorAll('[data-shortcut-type]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.shortcutType===type)));
     root.querySelectorAll('[data-shortcut-icon]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.shortcutIcon===iconId)));
-    if(type==='sound'&&!tracks){items.innerHTML='<p class="soft-note">Opening your sounds…</p>';save.disabled=true;loadSounds();return;}
     const list=available();items.innerHTML=list.length?list.map(track=>`<button class="glass custom-shortcut-item" type="button" data-shortcut-item="${escape(track.id)}" aria-pressed="${track.id===itemId}"><span><strong>${escape(track.label)}</strong><small>${escape(track.detail||'')}</small></span><span class="custom-shortcut-radio" aria-hidden="true"></span></button>`).join(''):'<p class="soft-note">No sounds available here yet.</p>';
     items.querySelectorAll('[data-shortcut-item]').forEach(button=>button.onclick=()=>{itemId=button.dataset.shortcutItem;renderItems();});
     save.disabled=!list.some(track=>track.id===itemId);
   }
-  async function loadSounds(){
-    const builtIn=builtInTracks().filter(track=>{const source=assets.audio[track.id];return source?.kind!=='file'||!!source.url;});
-    let personal=[];try{personal=(await musicStore.list()).filter(track=>track.audioBlob&&!track.unavailable);}catch{if(active)error.textContent='Your saved music could not be opened.';}
-    if(!active)return;
-    tracks=[...builtIn,...personal].map(track=>({id:track.id,label:track.displayName,detail:track.sourceType==='userImported'?'My Music':assets.soundCategories.find(category=>category.id===track.category)?.name||'Sound',category:track.category}));
-    renderItems();
-  }
-  root.querySelectorAll('[data-shortcut-type]').forEach(button=>button.onclick=()=>{if(type===button.dataset.shortcutType)return;type=button.dataset.shortcutType;itemId='';renderItems();});
   root.querySelectorAll('[data-shortcut-icon]').forEach(button=>button.onclick=()=>{iconId=button.dataset.shortcutIcon;root.querySelectorAll('[data-shortcut-icon]').forEach(option=>option.setAttribute('aria-pressed',String(option===button)));});
-  save.onclick=()=>{const selected=available().find(track=>track.id===itemId);if(!selected)return;try{const shortcut={type,itemId,iconId,label:selected.label};writeCustomShortcut(localStorage,shortcut);onSave(shortcut);}catch{error.textContent='This shortcut could not be saved. Please try again.';}};
+  save.onclick=()=>{const selected=available().find(track=>track.id===itemId);if(!selected)return;try{const shortcut={type:'breathe',itemId,iconId,label:selected.label};writeCustomShortcut(localStorage,shortcut);onSave(shortcut);}catch{error.textContent='This shortcut could not be saved. Please try again.';}};
   renderItems();
   return ()=>{active=false;};
 }
