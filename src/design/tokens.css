@@ -1,11 +1,11 @@
 :root {
- --bg:var(--asset-color-e9e5e6); --mist:var(--asset-color-f3eded); --text:var(--asset-color-454650); --muted:var(--asset-color-73727d);
+ --bg:var(--asset-color-e9e5e6); --mist:var(--asset-color-f3eded); --text:#3f4049; --muted:#686772;
  --glass:rgba(255,253,250,.40); --milk:rgba(255,253,250,.66); --edge:rgba(255,255,255,.75);
  --breathe:var(--asset-color-a6b9ce); --sound:var(--asset-color-beb3cb); --mood:var(--asset-color-d6b2be);
  --happy:var(--asset-color-f7e289); --calm:var(--asset-color-35c8b4); --loved:var(--asset-color-ea5e86); --energized:var(--asset-color-fef6f1); --content:var(--asset-color-ea9b90); --dreamy:var(--asset-color-dbc0e8); --sad:var(--asset-color-a2becc); --anxious:var(--asset-color-5f86a6); --angry:var(--asset-color-243a5e); --stressed:var(--asset-color-ba70a1); --numb:var(--asset-color-816684); --drained:var(--asset-color-cfe3f1);
  --r-sm:16px; --r-card:28px; --r-pill:999px; --blur:24px;
  --shadow:0 8px 28px rgba(92,77,87,.055),inset 0 1px 1px rgba(255,255,255,.8);
  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:24px; --s6:32px; --s7:48px;
- --font:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+ --font:'Segoe Print','Bradley Hand','Comic Sans MS',cursive;
  --motion:var(--asset-time-240ms); --safe-top:env(safe-area-inset-top,0px); --safe-bottom:env(safe-area-inset-bottom,0px);
 }

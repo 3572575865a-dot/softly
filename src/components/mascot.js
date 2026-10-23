@@ -11,6 +11,6 @@ export function mascot({state='floating',size='large',animated=true,expression='
 }
 export function decorateMascotHeader(root,page){
  const state=PAGE_MASCOT_STATE[page];if(!state)return;
- const header=root.querySelector('.page-heading,.mood-heading,.mood-editor-top');if(!header)return;
+ const header=root.querySelector('.page-heading,.mood-heading,.mood-editor-top');if(!header||header.hasAttribute('data-no-mascot'))return;
  header.classList.add('has-header-mascot');const companion=document.createElement('div');companion.className='header-mascot';companion.setAttribute('aria-hidden','true');companion.innerHTML=mascot({state,size:'small',animated:true});header.append(companion);
 }
