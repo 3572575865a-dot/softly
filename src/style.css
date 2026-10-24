@@ -34,3 +34,9 @@ html[lang="zh-CN"] :is(h1,h2,h3,.wordmark,.tap-heading,.breathing-title){
 html[lang="zh-CN"] :is(button,input,textarea,select){letter-spacing:.025em}
 html[lang="zh-CN"] :is(.eyebrow,.tap-heading h1){letter-spacing:.12em}
 html[lang="zh-CN"] .home-responsive h1{letter-spacing:.035em;line-height:1.22}
+
+/* Match the browser safe areas to the page and keep all four Home cards visible. */
+html{min-height:100%;background:#f2edef}
+body,#app{min-height:100svh}
+.situations{width:100%;min-width:0}
+.situations>.scenario{min-width:0}
